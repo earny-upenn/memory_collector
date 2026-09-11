@@ -1,147 +1,225 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-  />
-  <title>Memory Collector</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-      <h1>Memory Collector</h1>
-      <p class="subtitle">Collect campus memories in 60 seconds.</p>
-    </header>
+    <!doctype html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+      />
+      <meta
+        name="description"
+        content="Memory Collector is an interactive game for collecting and reflecting on memories of the campus experience."
+      />
+      <title>Memory Collector</title>
+      <link rel="stylesheet" href="style.css" />
+      <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    </head>
+    <body>
+      <div class="app-shell">
+        <header class="topbar">
+          <h1>Memory Collector</h1>
+          <p class="subtitle">Collect campus memories in 60 seconds.</p>
+        </header>
 
-    <main class="game-layout">
-      <section class="game-panel">
-        <div class="hud">
-          <div class="hud-item">Score: <span id="score">0</span></div>
-          <div class="hud-item">Time: <span id="time">60</span>s</div>
-        </div>
+        <main class="game-layout">
+          <section class="game-panel">
+            <div class="hud">
+              <div class="hud-item">Score: <span id="score">0</span></div>
+              <div class="hud-item" id="timeHud">Time: <span id="time">60</span><span id="timeSuffix">s</span></div>
+            </div>
 
-        <div id="startOverlay" class="start-overlay">
-          <div class="start-overlay-card">
-            <h2>Memory Collector</h2>
-            <p>Collect as many Penn memories as you can in 60 seconds.</p>
-            <button id="startBtnOverlay" class="primary-btn" type="button">Start Game</button>
+            <div id="startOverlay" class="start-overlay">
+              <div class="start-overlay-card">
+                <h2>Memory Collector</h2>
+                <p>Collect as many memories as you can in 60 seconds.</p>
+                <div class="mode-choice">
+                  <button id="startBtnOverlay" class="primary-btn" type="button">Play Visual Game</button>
+                  <button id="accessibleBtnOverlay" class="secondary-btn" type="button">Play Accessible Game</button>
+                </div>
+                <p class="mode-note">
+                  Accessible Game is untimed, has no moving game elements,
+                  and uses text-based, keyboard-friendly controls.
+                </p> 
+              </div>
+            </div>
+
+            <div id="visualGameArea">
+              <canvas id="gameCanvas" width="400" height="640" aria-label="Memory Collector game"></canvas>
+
+              <div class="mobile-controls">
+                <button
+                  id="leftBtn"
+                  class="control-btn"
+                  type="button"
+                  aria-label="Move left"
+                >
+                  ◀
+                </button>
+
+                <button
+                  id="rightBtn"
+                  class="control-btn"
+                  type="button"
+                  aria-label="Move right"
+                >
+                  ▶
+                </button>
+              </div>
+            </div>
+
+            <section id="accessibleGameArea" class="accessible-game hidden" aria-labelledby="accessibleGameHeading">
+              <h2 id="accessibleGameHeading">Accessible Memory Collector</h2>
+              <p>
+                This version is untimed and has no moving game elements.
+                One Penn memory appears at a time. Use Collect Memory to add it
+                to your score, Skip Memory to move to the next memory without
+                collecting it, and Finish Game whenever you are ready to see
+                your results.
+              </p>
+              <div class="accessible-memory-card">
+                <p class="accessible-memory-label">Current memory</p>
+
+                <p
+                  id="accessibleMemory"
+                  class="accessible-memory-text"
+                  aria-live="polite"
+                  aria-atomic="true"
+                ></p>
+              </div>
+
+              <div class="button-row accessible-game-controls">
+                <button id="collectMemoryBtn" class="primary-btn" type="button">Collect Memory</button>
+                <button id="skipMemoryBtn" class="secondary-btn" type="button">Skip Memory</button>
+              </div>
+
+              <p id="accessibleStatus" class="sr-status" aria-live="polite" aria-atomic="true"></p>
+
+              <button id="finishAccessibleBtn" class="secondary-btn finish-accessible-btn" type="button">Finish Game</button>
+            </section>
+          </section>
+
+          <aside class="side-panel">
+            <div class="card" id="startCard">
+              <h2>How to Play</h2>
+              <p>Use the Left and Right Arrow keys, or the on-screen arrow buttons, to move Ben Franklin and collect falling memories.</p>
+              <p class="mode-note">Or choose the untimed Accessible Game for a text-based, keyboard-friendly experience.</p>
+              <ul>
+                <li>📚 Long days at the library</li>
+                <li>☕ Late night coffee run</li>
+                <li>🎓 Graduation day</li>
+                <li>🎟️ Campus events</li>
+                <li>🏫 Walking to class on Locust Walk</li>
+                <li>🚌 Taking the Penn Bus</li>
+                <li>📸 Capturing memories with friends</li>
+                <li>🎉 Celebrations and social moments</li>
+              </ul>
+              <div class="mode-choice">
+                <button id="startBtn" class="primary-btn" type="button">Play Visual Game</button>
+                <button id="accessibleBtn" class="secondary-btn" type="button">Play Accessible Game</button>
+              </div>
+            </div>
+
+            <div class="card hidden" id="endCard">
+              <h2>You collected <span id="finalScore">0</span> memories</h2>
+
+              <div class="results-grid">
+                <div class="result-box">
+                  <div class="result-label">Academic</div>
+                  <div class="result-value" id="bookCount">0</div>
+                  <div class="result-subtext">📚 + ☕</div>
+                </div>
+
+                <div class="result-box">
+                  <div class="result-label">Milestones</div>
+                  <div class="result-value" id="coffeeCount">0</div>
+                  <div class="result-subtext">🎓 + 🎟️</div>
+                </div>
+
+                <div class="result-box">
+                  <div class="result-label">Campus</div>
+                  <div class="result-value" id="capCount">0</div>
+                  <div class="result-subtext">🏫 + 🚌</div>
+                </div>
+
+                <div class="result-box">
+                  <div class="result-label">Social</div>
+                  <div class="result-value" id="cameraCount">0</div>
+                  <div class="result-subtext">📸 + 🎉</div>
+                </div>
+              </div>
+
+              <p id="reflectionText" class="reflection-text"></p>
+
+              <div class="button-row">
+                <a
+                  href="https://forms.gle/8MdJ4XPKCgv3NzYp6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="primary-btn"
+                >
+                  Share a Memory
+                </a>
+
+                <button id="restartBtn" class="primary-btn" type="button">Play Again</button>
+              </div>
+            </div>
+          </aside>
+        </main>
+
+        <footer class="footer">
+          <p><strong>AI Disclosure:</strong> Generative AI was used to support the ideation and development of this game.</p>
+            <p>
+              <a href="https://www.upenn.edu/about/disclaimer">Disclaimer</a>
+              |
+              <a href="https://www.upenn.edu/about/privacy-policy">Privacy Policy</a>
+            </p>
+          </footer>
+      </div>
+
+      <div
+        id="endPopup"
+        class="fact-popup hidden-popup"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="endPopupTitle"
+      >
+        <div class="fact-popup-card">
+          <h3 id="endPopupTitle">You collected <span id="popupScore">0</span> memories</h3>
+
+          <div id="popupFactSection" class="popup-section hidden">
+            <h4>Penn Fact Unlocked</h4>
+            <p id="popupFactText"></p>
           </div>
-        </div>
 
-        <canvas id="gameCanvas" width="400" height="640" aria-label="Memory Collector game"></canvas>
+          <p id="popupReflectionText" class="reflection-text"></p>
 
-        <div class="mobile-controls">
-          <button id="leftBtn" class="control-btn" type="button">◀</button>
-          <button id="rightBtn" class="control-btn" type="button">▶</button>
-        </div>
-      </section>
-
-      <aside class="side-panel">
-        <div class="card" id="startCard">
-          <h2>How to Play</h2>
-          <p>Move left and right to collect falling Penn memories.</p>
-          <ul>
-            <li>📚 Long days at the library</li>
-            <li>☕ Late night coffee run</li>
-            <li>🎓 Graduation day</li>
-            <li>🎟️ Campus events</li>
-            <li>🏫 Walking to class on Locust Walk</li>
-            <li>🚌 Taking the Penn Bus</li>
-            <li>📸 Capturing memories with friends</li>
-            <li>🎉 Celebrations and social moments</li>
-          </ul>
-          <button id="startBtn" class="primary-btn" type="button">Start Game</button>
-        </div>
-
-        <div class="card hidden" id="endCard">
-          <h2>You collected <span id="finalScore">0</span> memories</h2>
-
-          <div class="results-grid">
-            <div class="result-box">
-              <div class="result-label">Academic</div>
-              <div class="result-value" id="bookCount">0</div>
-              <div class="result-subtext">📚 + ☕</div>
-            </div>
-
-            <div class="result-box">
-              <div class="result-label">Milestones</div>
-              <div class="result-value" id="coffeeCount">0</div>
-              <div class="result-subtext">🎓 + 🎟️</div>
-            </div>
-
-            <div class="result-box">
-              <div class="result-label">Campus</div>
-              <div class="result-value" id="capCount">0</div>
-              <div class="result-subtext">🏫 + 🚌</div>
-            </div>
-
-            <div class="result-box">
-              <div class="result-label">Social</div>
-              <div class="result-value" id="cameraCount">0</div>
-              <div class="result-subtext">📸 + 🎉</div>
-            </div>
+          <div id="popupMemorySection" class="popup-section">
+            <p>Add your memory to The Memory Collector Vault.</p>
           </div>
 
-          <p id="reflectionText" class="reflection-text"></p>
-
-          <div class="button-row">
+          <div class="button-row popup-button-row">
             <a
+              id="popupMemoryLink"
               href="https://forms.gle/8MdJ4XPKCgv3NzYp6"
               target="_blank"
               rel="noopener noreferrer"
               class="primary-btn"
             >
-            Share a Memory
+              Share Your Memory
+              <span class="sr-only">(opens in a new tab)</span>
             </a>
 
-            <button id="restartBtn" class="primary-btn" type="button">Play Again</button>
+            <button id="playAgainBtn" class="primary-btn" type="button">
+              Play Again
+            </button>
+
+            <button id="closeEndPopupBtn" class="secondary-btn" type="button">
+              Continue
+            </button>
           </div>
         </div>
-      </aside>
-    </main>
-  </div>
-
-  <div id="endPopup" class="fact-popup hidden-popup" aria-live="polite" aria-modal="true" role="dialog">
-    <div class="fact-popup-card">
-      <h3>You collected <span id="popupScore">0</span> memories</h3>
-
-      <div id="popupFactSection" class="popup-section hidden">
-        <h4>Penn Fact Unlocked</h4>
-        <p id="popupFactText"></p>
       </div>
 
-      <p id="popupReflectionText" class="reflection-text"></p>
-
-      <div id="popupMemorySection" class="popup-section">
-        <p>Add your memory to The Memory Collector Vault.</p>
-      </div>
-
-      <div class="button-row popup-button-row">
-        <a
-          id="popupMemoryLink"
-          href="https://forms.gle/8MdJ4XPKCgv3NzYp6"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="primary-btn"
-        >
-          Share Your Memory
-        </a>
-
-        <button id="playAgainBtn" class="primary-btn" type="button">
-          Play Again
-        </button>
-
-        <button id="closeEndPopupBtn" class="secondary-btn" type="button">
-          Continue
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
-</html>
+      <script src="script.js"></script>
+    </body>
+    </html>
