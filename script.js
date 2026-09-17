@@ -487,6 +487,7 @@
       // Re-enable accessible controls
       collectMemoryBtn.disabled = false;
       skipMemoryBtn.disabled = false;
+      finishAccessibleBtn.disabled = false;
 
       setGameMode("visual");
 
@@ -604,6 +605,7 @@
       gameLoop();
     }
 
+    
     function endGame() {
       gameRunning = false;
       gameEnded = true;
@@ -1003,7 +1005,7 @@
       skipMemoryBtn.addEventListener("click", skipAccessibleMemory);
     }
     if (finishAccessibleBtn) {
-      finishAccessibleBtn.addEventListener("click", finishAccessibleGame);
+      finishAccessibleBtn.addEventListener("click", endGame);
     }
     if (restartBtn) restartBtn.addEventListener("click", resetGame);
     if (playAgainBtn) {
